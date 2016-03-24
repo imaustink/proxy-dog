@@ -1,0 +1,14 @@
+{
+  "name": "proxy-dog",
+  "version": "0.0.0",
+  "description": "Simple domain routed proxy server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Austin J Kurpuis (Dabman, blackmarket, imaustink)",
+  "license": "MIT",
+  "dependencies": {
+    "http-proxy": "^1.13.2"
+  }
+}
