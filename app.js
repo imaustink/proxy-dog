@@ -10,13 +10,15 @@ if(Config.https && Config.https.port){
 	// Make sure we have ssl config
 	if(typeof Config.https.ssl !== 'object' || Array.isArray(Config.https.ssl)) throw Error('No SSL config provided!');
 	// Make ssl config obj
-	var ssl = {};
+	var options = {
+		ws: true
+	};
 	// Loop through the SSL config and convert the path's to a file
 	for(var field in Config.https.ssl){
-		ssl[field] = FS.readFileSync(Config.https.ssl[field]);
+		options[field] = FS.readFileSync(Config.https.ssl[field]);
 	}
 	// Setup HTTPS server
-	var httpsServer = HTTPS.createServer(ssl, proxyHandler(true));
+	var httpsServer = HTTPS.createServer(options, proxyHandler(true));
 	// Get HTTPS port
 	var https_port = Config.https ? Config.https.port : 8080;
 	// Listen for HTTPS
