@@ -35,19 +35,20 @@ class ProxyDog {
         });
 
         this.proxies = {};
+        this.options = options;
 
         for(let route in options.routes) this.createProxy(route, options.routes[route]);
     }
 
     createProxy(domain, options){
-        var target = options.ip;
-        if(options.ws !== false) options.ws = true;
-        if(options.port) target += (':' + options.port);
         var proxy = HTTPProxy.createProxyServer({
             xfwd: options.xfwd,
             secure: options.secure,
             ws: options.ws,
-            target: target
+            target: {
+                host: options.host,
+                port: options.port
+            }
         });
 
         proxy.on('upgrade', function (req, socket, head) {
