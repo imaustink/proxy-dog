@@ -51,7 +51,11 @@ class ProxyDog {
             }
         });
 
-        proxy.on('upgrade', function (req, socket, head) {
+        this.httpServer.on('upgrade', function (req, socket, head) {
+            proxy.ws(req, socket, head);
+        });
+
+        this.httpsServer.on('upgrade', function (req, socket, head) {
             proxy.ws(req, socket, head);
         });
 
