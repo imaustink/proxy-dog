@@ -38,7 +38,7 @@ class ProxyDog {
         this.proxies = {};
         this.options = options;
 
-        for(let route in options.routes) this.createProxy(route, options.routes[route].proxy);
+        for(let route in options.routes) this.createProxy(route, options.routes[route]);
     }
 
     createProxy(domain, options){
@@ -57,20 +57,20 @@ class ProxyDog {
             proxy.ws(req, socket, head);
         });
 
-        this.proxies[domain] = proxy;
+        this.proxies[domain] = {proxy, options};
     }
 
     getHTTPProxyHandler(secure){
         var self = this;
         return function(req, res){
             // Get route
-            var proxy = self.proxies[req.headers.host];
-            if(proxy.force_https && !secure){
+            var target = self.proxies[req.headers.host];
+            if(target.options.force_https && !secure){
                 res.writeHead(301, {'Location': 'https://' + req.headers.host + req.url});
                 return res.end();
             }
             console.log(req.method, req.headers.host, req.url);
-            if(proxy) return proxy.web(req, res);
+            if(target) return target.proxy.web(req, res);
             self.proxyError('There was an error forwarding your request!', req, res);
         };
     }
