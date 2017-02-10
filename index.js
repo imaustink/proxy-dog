@@ -37,15 +37,14 @@ class ProxyDog {
         this.proxies = {};
         this.options = options;
 
-        for(let route in options.routes) this.createProxy(route, options.routes[route]);
+        for(let route in options.routes) this.createProxy(route, options.routes[route].proxy);
     }
 
     createProxy(domain, options){
         var proxy = new HTTPProxy.createProxyServer(options);
 
-        proxy.on('error', function(err, req, res) {
+        proxy.on('error', function(err) {
             console.error(err);
-            console.log(err, req, res);
         });
 
         this.httpServer.on('upgrade', function (req, socket, head) {
