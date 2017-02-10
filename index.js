@@ -1,6 +1,5 @@
 "use strict";
 var FS = require('fs');
-var URL = require('url');
 var HTTP = require('http');
 var HTTPS = require('https');
 var HTTPProxy = require('http-proxy');
@@ -46,7 +45,7 @@ class ProxyDog {
 
         proxy.on('error', function(err, req, res) {
             console.error(err);
-            res.end();
+            console.log(err, req, res);
         });
 
         this.httpServer.on('upgrade', function (req, socket, head) {
@@ -63,13 +62,15 @@ class ProxyDog {
     getHTTPProxyHandler(secure){
         var self = this;
         return function(req, res){
+            console.log(req.method, req.headers.host, req.url);
+
             // Get route
             var target = self.proxies[req.headers.host];
             if(target.options.force_https && !secure){
                 res.writeHead(301, {'Location': 'https://' + req.headers.host + req.url});
                 return res.end();
             }
-            console.log(req.method, req.headers.host, req.url);
+
             if(target) return target.proxy.web(req, res);
             self.proxyError('There was an error forwarding your request!', req, res);
         };
