@@ -1,5 +1,6 @@
 "use strict";
 var FS = require('fs');
+var URL = require('url');
 var HTTP = require('http');
 var HTTPS = require('https');
 var HTTPProxy = require('http-proxy');
@@ -16,7 +17,7 @@ class ProxyDog {
                 ssl[field] = FS.readFileSync(options.https.ssl[field]);
             }
             // Setup HTTPS server
-            this.httpsServer = HTTPS.createServer(ssl, this.getHTTPProxyHandler());
+            this.httpsServer = HTTPS.createServer(ssl, this.getHTTPProxyHandler(true));
             // Get HTTPS port
             var https_port = options.https ? options.https.port : 8080;
             // Listen for HTTPS
@@ -26,7 +27,7 @@ class ProxyDog {
         }
 
         // Setup HTTP server
-        this.httpServer = HTTP.createServer(this.getHTTPProxyHandler());
+        this.httpServer = HTTP.createServer(this.getHTTPProxyHandler(false));
         // Get http port
         var http_port = options.http ? options.http.port : 80;
         // Listen for HTTPS
@@ -37,7 +38,7 @@ class ProxyDog {
         this.proxies = {};
         this.options = options;
 
-        for(let route in options.routes) this.createProxy(route, options.routes[route]);
+        for(let route in options.routes) this.createProxy(route, options.routes[route].proxy);
     }
 
     createProxy(domain, options){
@@ -59,11 +60,15 @@ class ProxyDog {
         this.proxies[domain] = proxy;
     }
 
-    getHTTPProxyHandler(){
+    getHTTPProxyHandler(secure){
         var self = this;
         return function(req, res){
             // Get route
             var proxy = self.proxies[req.headers.host];
+            if(proxy.force_https && !secure){
+                res.writeHead(301, {'Location': 'https://' + req.headers.host + req.url});
+                return res.end();
+            }
             console.log(req.method, req.headers.host, req.url);
             if(proxy) return proxy.web(req, res);
             self.proxyError('There was an error forwarding your request!', req, res);
