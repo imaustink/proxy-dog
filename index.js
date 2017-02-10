@@ -16,7 +16,7 @@ class ProxyDog {
                 ssl[field] = FS.readFileSync(options.https.ssl[field]);
             }
             // Setup HTTPS server
-            this.httpsServer = HTTPS.createServer(ssl, this.getProxyHandler());
+            this.httpsServer = HTTPS.createServer(ssl, this.getHTTPProxyHandler());
             // Get HTTPS port
             var https_port = options.https ? options.https.port : 8080;
             // Listen for HTTPS
@@ -26,7 +26,7 @@ class ProxyDog {
         }
 
         // Setup HTTP server
-        this.httpServer = HTTP.createServer(this.getProxyHandler());
+        this.httpServer = HTTP.createServer(this.getHTTPProxyHandler());
         // Get http port
         var http_port = options.http ? options.http.port : 80;
         // Listen for HTTPS
@@ -41,14 +41,11 @@ class ProxyDog {
     }
 
     createProxy(domain, options){
-        var proxy = HTTPProxy.createProxyServer({
-            xfwd: options.xfwd,
-            secure: options.secure,
-            ws: options.ws,
-            target: {
-                host: options.host,
-                port: options.port
-            }
+        var proxy = new HTTPProxy.createProxyServer(options);
+
+        proxy.on('error', function(err, req, res) {
+            console.error(err);
+            res.end();
         });
 
         this.httpServer.on('upgrade', function (req, socket, head) {
@@ -62,23 +59,14 @@ class ProxyDog {
         this.proxies[domain] = proxy;
     }
 
-    getProxyHandler(){
+    getHTTPProxyHandler(){
         var self = this;
-        return function(req){
+        return function(req, res){
             // Get route
             var proxy = self.proxies[req.headers.host];
-            console.log(req.method, req.url, req.headers.host);
-
-            if(arguments.length === 2){
-                var res = arguments[1];
-                // Proxy request to target
-                if(proxy) return proxy.web(req, res);
-            }
-
-            var socket = arguments[1];
-            var head = arguments[2];
-            if(proxy) return proxy.ws(req, socket, head);
-            self.proxyError('There was an error forwarding your request!', req, socket);
+            console.log(req.method, req.headers.host, req.url);
+            if(proxy) return proxy.web(req, res);
+            self.proxyError('There was an error forwarding your request!', req, res);
         };
     }
 
