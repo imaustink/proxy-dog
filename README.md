@@ -1,6 +1,7 @@
-# proxy-dog
+# Proxy Dog
 Lightweight HTTP proxy with host routing. Load balancing coming soon...
-
+## Why
+Say you want to host several internet facing services on differant servers on your network. Forward HTTP ports on your router to a proxy server running Proxy Dog and configure a new routing rule and it will forward requests to the correct server.
 ## Install
 ### Git
 ```git clone https://github.com/imaustink/proxy-dog.git```
