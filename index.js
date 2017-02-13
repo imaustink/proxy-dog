@@ -18,7 +18,7 @@ class ProxyDog {
             // Setup HTTPS server
             this.httpsServer = HTTPS.createServer(ssl, this.getHTTPProxyHandler(true));
             // Get HTTPS port
-            var https_port = options.https ? options.https.port : 8080;
+            var https_port = options.https ? options.https.port : 8443;
             // Listen for HTTPS
             this.httpsServer.listen(https_port, function(){
                 console.log('Listening for HTTPS at port', https_port);
@@ -28,7 +28,7 @@ class ProxyDog {
         // Setup HTTP server
         this.httpServer = HTTP.createServer(this.getHTTPProxyHandler(false));
         // Get http port
-        var http_port = options.http ? options.http.port : 80;
+        var http_port = options.http ? options.http.port : 8080;
         // Listen for HTTPS
         this.httpServer.listen(http_port, function(){
             console.log('Listening for HTTP at port', http_port);
