@@ -9,6 +9,7 @@
   "author": "Austin J Kurpuis (Dabman, blackmarket, imaustink)",
   "license": "MIT",
   "dependencies": {
-    "http-proxy": "^1.16.2"
+    "http-proxy": "^1.16.2",
+    "uuid": "^3.0.1"
   }
 }
