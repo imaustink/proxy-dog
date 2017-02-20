@@ -55,7 +55,7 @@ class ProxyDog {
 	getProxyHandler(protocol, secure){
 		var self = this;
 		return function(req, res, head){
-			req.uuid = ProxyDog.getCookies(req.headers.cookie, 'proxy-dog-uuid');
+			req.uuid = ProxyDog.getCookie(req.headers.cookie, 'proxy-dog-uuid');
 			console.log(req.method, req.headers.host, req.url);
 
 			var route = self.proxies[req.headers.host];
@@ -93,7 +93,7 @@ class ProxyDog {
 		res.end(message);
 	}
 
-	static getCookies (cookieString, name){
+	static getCookie(cookieString, name){
 		var value = "; " + cookieString;
 		var parts = value.split("; " + name + "=");
 		if(parts.length == 2) return parts.pop().split(";").shift();
