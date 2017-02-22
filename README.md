@@ -1,5 +1,11 @@
 # Proxy Dog
-Lightweight HTTP proxy with host routing. Load balancing coming soon...
+Lightweight HTTP proxy built on Node.js.
+
+## Features
+- Load Balancing
+- Sticky Sessions
+- Hostname Routing
+- Web Socket Proxy
 
 ## Why
 Say you want to host several internet facing services on different servers on your network. Forward HTTP ports on your router to a proxy server running Proxy Dog and configure a new routing rule and it will forward requests to the correct server.
