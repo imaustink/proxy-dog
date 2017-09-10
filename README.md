@@ -1,4 +1,6 @@
 # Proxy Dog
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/imaustink/proxy-dog.svg)](https://greenkeeper.io/)
 Lightweight HTTP proxy built on Node.js.
 
 ## Features
